@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaurusBet – Communauté</title>
+  <!-- Polices Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Feuille de styles principale -->
+  <link rel="stylesheet" href="styles/style.css">
+  <!-- Configuration globale (constantes) -->
+  <script src="scripts/config.js"></script>
+  <!-- Uploadcare widget (uploader d'images) -->
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+  <script>
+    // Définir la clé publique Uploadcare depuis la configuration globale
+    UPLOADCARE_PUBLIC_KEY = window.appConfig.UPLOADCARE_PUBLIC_KEY;
+  </script>
+  <!-- Script principal -->
+  <script defer src="scripts/script.js"></script>
+</head>
+<body>
+  <!-- =====================================================================
+       EN-TÊTE (Navigation principale)
+       ===================================================================== -->
+  <header>
+    <div class="container header-inner">
+      <!-- Logo -->
+      <div class="logo-wrapper">
+        <img src="assets/logo.png" alt="TaurusBet logo">
+        <span>TaurusBet</span>
+      </div>
+      <!-- Navigation -->
+      <nav>
+        <!-- Bouton menu mobile (hamburger) -->
+        <div class="menu-toggle" aria-label="Menu">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <!-- Liens de navigation -->
+        <ul>
+          <li><a href="#" aria-label="Section Communauté">Communauté</a></li>
+          <li><a href="#tickets" aria-label="Vos tickets">Vos tickets</a></li>
+          <li><a href="#wheel" aria-label="Roue de la semaine">Roue</a></li>
+          <li><a href="pages/vip.html" aria-label="Devenir VIP">Devenir VIP</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       CONTENU PRINCIPAL
+       ===================================================================== -->
+  <main>
+    <!-- Section Hero (Bannière principale) -->
+    <section class="hero">
+      <div class="hero-content fade-in">
+        <h1>Communauté Taurus</h1>
+        <p>Rejoignez la plus grande communauté de parieurs sportifs et partagez vos tickets gagnants avec des milliers de passionnés.</p>
+        <a href="pages/vip.html" class="btn-primary">Devenir VIP</a>
+      </div>
+    </section>
+
+    <!-- Section Concours de la semaine -->
+    <section class="container contest fade-in">
+      <div class="text">
+        <h2 class="section-title">Concours de la semaine</h2>
+        <p>Chaque semaine nous organisons un concours exclusif avec des prix incroyables pour nos membres. Participez dès maintenant et tentez de remporter des lots uniques&nbsp;!</p>
+        <a href="pages/vip.html" class="btn-secondary">En savoir plus</a>
+      </div>
+      <div class="poster"></div>
+    </section>
+
+    <!-- Section Tickets gagnants -->
+    <section class="container tickets fade-in" id="tickets">
+      <h2 class="section-title">Vos tickets</h2>
+      <p>Découvrez notre ticket du jour et partagez votre propre ticket gagnant pour inspirer la communauté.</p>
+      <div class="daily-ticket">
+        <img src="assets/ticket-du-jour.jpg" alt="Ticket du jour" class="daily-ticket-img">
+        <button type="button" class="btn-primary" id="openTicketModal">Déposer mon ticket</button>
+      </div>
+    </section>
+
+    <!-- Section Roue de la fortune -->
+    <section class="container wheel-section fade-in" id="wheel">
+      <h2 class="section-title">Roue de la semaine</h2>
+      <p>Tournez la roue pour découvrir les surprises quotidiennes réservées à nos membres VIP.</p>
+      <div class="wheel"><span>Spin</span></div>
+      <a href="pages/vip.html" class="btn-secondary">Rejoindre le VIP</a>
+    </section>
+  </main>
+
+  <!-- Modale Déposer un ticket -->
+  <div id="ticketModal" class="modal" aria-hidden="true">
+    <div class="modal-overlay" data-modal-close="true"></div>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="ticketModalTitle">
+      <button type="button" class="modal-close" aria-label="Fermer">&times;</button>
+      <h3 id="ticketModalTitle">Déposer mon ticket</h3>
+      <form id="ticketForm" class="form">
+        <div class="form-group">
+          <label for="pseudo">Pseudo</label>
+          <input type="text" id="pseudo" name="pseudo" required>
+        </div>
+        <div class="form-group">
+          <label for="emailTicket">E-mail</label>
+          <input type="email" id="emailTicket" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="comment">Commentaire</label>
+          <textarea id="comment" name="comment" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Image du ticket</label>
+          <!-- Champ Uploadcare pour charger une image obligatoire -->
+          <input type="hidden" role="uploadcare-uploader" name="ticketImage" data-images-only="true" data-tabs="file camera url" data-clearable="true" />
+        </div>
+        <button type="submit" class="btn-primary submit-ticket">Envoyer</button>
+      </form>
+      <div class="form-message" id="ticketFormMessage" aria-live="polite" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       PIED DE PAGE
+       ===================================================================== -->
+  <footer>
+    <p>&copy; 2025 TaurusBet. Tous droits réservés.</p>
+  </footer>
+</body>
+</html>
