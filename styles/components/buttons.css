@@ -1,0 +1,35 @@
+/* =========================================================================
+   Boutons
+   ========================================================================= */
+
+.btn-primary {
+  background: var(--color-red);
+  color: var(--color-white);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  border: none;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.btn-primary:hover {
+  background: #a3121a;
+}
+
+.btn-secondary {
+  background: var(--color-gold);
+  color: var(--color-black);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  border: none;
+  font-size: 1rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.btn-secondary:hover {
+  background: #b99700;
+}

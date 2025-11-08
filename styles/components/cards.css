@@ -1,0 +1,175 @@
+/* =========================================================================
+   Cartes & Tickets
+   ========================================================================= */
+
+.ticket-placeholder {
+  background: var(--color-dark);
+  border-radius: 8px;
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('../../assets/hero-bg.png') center/cover no-repeat;
+  filter: blur(4px) brightness(0.5);
+}
+
+.ticket-placeholder span {
+  position: relative;
+  z-index: 1;
+  font-size: 1rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tickets {
+  margin-top: 4rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 0;
+}
+
+.ticket {
+  width: 300px;
+  border-radius: 25px;
+  padding: 2rem 1.75rem 2.5rem;
+  text-align: left;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ticket:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(216, 31, 39, 0.4);
+}
+
+.ticket h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 1px;
+  margin-bottom: 1.2rem;
+}
+
+.ticket ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--color-white);
+}
+
+.ticket li.disabled {
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: line-through;
+}
+
+.ticket .cta {
+  display: block;
+  text-align: center;
+  background: var(--color-red);
+  color: var(--color-white);
+  font-family: 'Bebas Neue', sans-serif;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  padding: 0.7rem 0;
+  border-radius: 50px;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.ticket .cta:hover {
+  background: var(--color-gold);
+  color: var(--color-black);
+  transform: translateY(-3px);
+}
+
+.ticket-decouverte {
+  background: linear-gradient(180deg, #101010 0%, #181818 100%);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticket-decouverte h2 {
+  color: var(--color-red);
+}
+
+.ticket-taurus {
+  background: linear-gradient(180deg, #1a0a0b 0%, #360007 100%);
+  border: 2px solid var(--color-red);
+}
+
+.ticket-taurus h2 {
+  color: var(--color-red);
+}
+
+.ticket-taurus-plus {
+  background: linear-gradient(180deg, #300000 0%, #5a0000 100%);
+  border: 2px solid var(--color-gold);
+  box-shadow: 0 15px 40px rgba(229, 181, 0, 0.2);
+}
+
+.ticket-taurus-plus h2 {
+  color: var(--color-gold);
+}
+
+.ticket-taurus-plus .cta {
+  background: var(--color-gold);
+  color: var(--color-black);
+}
+
+.ticket-taurus-plus .cta:hover {
+  background: var(--color-red);
+  color: var(--color-white);
+}
+
+.seats-counter {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: var(--color-gold);
+}
+
+.rarity-note {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.5rem;
+}
+
+.ticket-winner {
+  margin: 3rem auto;
+  text-align: center;
+}
+
+.ticket-winner img {
+  max-width: 600px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(189, 31, 31, 0.6);
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .tickets {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .ticket {
+    width: 85%;
+    max-width: 340px;
+  }
+}

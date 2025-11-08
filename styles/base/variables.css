@@ -1,0 +1,16 @@
+/* =========================================================================
+   Variables CSS
+   ========================================================================= */
+
+:root {
+  /* Couleurs principales */
+  --color-black: #000000;
+  --color-red: #D81F27;
+  --color-gold: #E5B500;
+  --color-white: #FFFFFF;
+  --color-dark: #121212;
+
+  /* Paramètres généraux */
+  --transition: 0.3s ease;
+  --max-width: 1200px;
+}

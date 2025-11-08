@@ -10,12 +10,8 @@
   <link rel="stylesheet" href="../styles/style.css">
   <!-- Configuration globale (constantes) -->
   <script src="../scripts/config.js"></script>
-  <!-- Uploadcare widget pour l'upload d'images -->
-  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
-  <script>
-    // Définir la clé publique Uploadcare depuis la configuration globale
-    UPLOADCARE_PUBLIC_KEY = window.appConfig.UPLOADCARE_PUBLIC_KEY;
-  </script>
+  <!-- Initialisation Firebase -->
+  <script type="module" src="../scripts/firebase-init.js"></script>
   <!-- Script principal -->
   <script defer src="../scripts/script.js"></script>
 </head>
@@ -83,44 +79,35 @@
     <!-- Ce que je fais : carrousel -->
     <section class="container fade-in vip-section">
       <h2 style="text-align:center; color: var(--color-red);">Ce que je fais</h2>
-      <div class="carousel">
-        <div class="carousel-wrapper">
-          <!-- Slide 1 -->
-          <div class="carousel-slide active">
+      <div class="carousel-3d">
+        <div class="carousel-inner">
+          <div class="carousel-item">
             <h3>Communauté privée</h3>
-            <p>Sélection ultra qualitative des membres qui rejoindront le programme pour maintenir un niveau d'exigence maximal.</p>
-            <button type="button" class="btn-primary open-service-modal">Découvrir</button>
+            <p>Sélection ultra qualitative des membres qui rejoindront le programme pour maintenir un niveau d’exigence maximal.</p>
           </div>
-          <!-- Slide 2 -->
-          <div class="carousel-slide">
+          <div class="carousel-item">
             <h3>Analyses VIP</h3>
             <p>Montantes, funbets et jeux concours avec un accès privilégié à des offres exclusives réservées aux membres.</p>
-            <button type="button" class="btn-primary open-service-modal">Découvrir</button>
           </div>
-          <!-- Slide 3 -->
-          <div class="carousel-slide">
+          <div class="carousel-item">
             <h3>Coaching personnel</h3>
-            <p>Accompagnement individuel pour devenir rentable durablement et viser l'objectif symbolique des 2&nbsp;k€ par mois.</p>
-            <button type="button" class="btn-primary open-service-modal">Découvrir</button>
+            <p>Accompagnement individuel pour devenir rentable durablement pour un paiement unique à l'entrée de 2000€.</p>
           </div>
         </div>
-        <div class="carousel-nav">
-          <button class="carousel-prev" aria-label="Précédent">&#10094;</button>
-          <button class="carousel-next" aria-label="Suivant">&#10095;</button>
-        </div>
-        <div class="carousel-dots"></div>
+        <button class="carousel-prev" aria-label="Précédent">‹</button>
+        <button class="carousel-next" aria-label="Suivant">›</button>
       </div>
     </section>
 
     <!-- Ticket gagnant placeholder -->
     <section class="ticket-winner fade-in">
-      <h2 class="section-title">Ticket gagnant</h2>
-      <img src="../assets/ticket-gagnant.png" alt="Ticket gagnant">
+      <h2 class="section-title">2000€ Mais voici le ticket d'un de nos VIP</h2>
+      <img src="../assets/ticket-gagnant.png?v=20251108" alt="Ticket gagnant">
     </section>
 
     <!-- Offres -->
     <section class="container offers-section fade-in" id="offers">
-      <h2>Sélectionnez votre ticket</h2>
+      <h2>Maintenant à vous de choisir quelle offre vous correspond !</h2>
       <section class="tickets">
         <!-- Ticket Découverte -->
         <div class="ticket ticket-decouverte">
@@ -199,18 +186,18 @@
         <!-- Ancienneté -->
         <div class="form-group" id="app-anciennete-group">
           <label for="anciennete">Ancienneté dans le betting</label>
-          <select id="anciennete" name="anciennete" required>
+          <select id="anciennete" name="anciennete">
             <option value="">-- Choisissez --</option>
-            <option value="< 6 mois">&lt; 6 mois</option>
-            <option value="6-12 mois">6–12 mois</option>
+            <option value="< 1 an">&lt; 1 an</option>
             <option value="1-3 ans">1–3 ans</option>
-            <option value="3+ ans">3+ ans</option>
+            <option value="3-8 ans">3–8 ans</option>
+            <option value="8+ ans">8+ ans</option>
           </select>
         </div>
         <!-- Fréquence -->
         <div class="form-group" id="app-frequence-group">
           <label for="frequence">Fréquence de pari</label>
-          <select id="frequence" name="frequence" required>
+          <select id="frequence" name="frequence">
             <option value="">-- Choisissez --</option>
             <option value="1-2/sem">1–2/sem</option>
             <option value="3-5/sem">3–5/sem</option>
@@ -220,17 +207,12 @@
         <!-- Pourquoi -->
         <div class="form-group" id="app-why-group">
           <label for="why">Pourquoi rejoindre le VIP ?</label>
-          <textarea id="why" name="why" rows="3" required></textarea>
+          <textarea id="why" name="why" rows="3"></textarea>
         </div>
         <!-- Email -->
         <div class="form-group">
           <label for="app-email">E-mail</label>
-          <input type="email" id="app-email" name="email" required>
-        </div>
-        <!-- Upload facultatif -->
-        <div class="form-group optional-upload" id="app-upload-group">
-          <label>Joindre un ticket (facultatif)</label>
-          <input type="hidden" role="uploadcare-uploader" name="ticketImage" data-images-only="true" data-tabs="file camera url" data-clearable="true" />
+          <input type="email" id="app-email" name="email">
         </div>
         <button type="submit" class="btn-primary submit-application">Envoyer et rejoindre</button>
       </form>

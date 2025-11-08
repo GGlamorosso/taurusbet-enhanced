@@ -1,0 +1,146 @@
+/* =========================================================================
+   Page Accueil (index.html)
+   ========================================================================= */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 70vh;
+  background: url('../../assets/hero-bg.png') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.8) 0%, rgba(10, 10, 10, 0.6) 50%, rgba(10, 10, 10, 0.8) 100%);
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  z-index: 2;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  color: var(--color-red);
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: var(--color-red);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.contest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contest .text {
+  flex: 1 1 300px;
+}
+
+.contest .poster {
+  flex: 1 1 300px;
+  background: var(--color-dark);
+  border-radius: 10px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.contest .poster::before {
+  content: 'AFFICHE';
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.05);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-10deg);
+}
+
+.ticket-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.ticket-gallery .ticket-placeholder {
+  height: 150px;
+}
+
+.wheel-section {
+  margin-top: 4rem;
+  text-align: center;
+}
+
+.wheel {
+  width: 250px;
+  height: 250px;
+  margin: 2rem auto;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(216, 31, 39, 0.7), rgba(10, 10, 10, 1));
+  border: 4px solid var(--color-red);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 1s ease;
+}
+
+.wheel:hover {
+  transform: rotate(360deg);
+}
+
+.wheel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid var(--color-gold);
+}
+
+.wheel span {
+  position: relative;
+  z-index: 1;
+  font-size: 1.4rem;
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--color-white);
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+}

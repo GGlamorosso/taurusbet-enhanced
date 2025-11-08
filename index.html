@@ -10,12 +10,8 @@
   <link rel="stylesheet" href="styles/style.css">
   <!-- Configuration globale (constantes) -->
   <script src="scripts/config.js"></script>
-  <!-- Uploadcare widget (uploader d'images) -->
-  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
-  <script>
-    // Définir la clé publique Uploadcare depuis la configuration globale
-    UPLOADCARE_PUBLIC_KEY = window.appConfig.UPLOADCARE_PUBLIC_KEY;
-  </script>
+  <!-- Initialisation Firebase -->
+  <script type="module" src="scripts/firebase-init.js"></script>
   <!-- Script principal -->
   <script defer src="scripts/script.js"></script>
 </head>
@@ -103,17 +99,12 @@
           <input type="text" id="pseudo" name="pseudo" required>
         </div>
         <div class="form-group">
-          <label for="emailTicket">E-mail</label>
-          <input type="email" id="emailTicket" name="email" required>
-        </div>
-        <div class="form-group">
           <label for="comment">Commentaire</label>
           <textarea id="comment" name="comment" rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label>Image du ticket</label>
-          <!-- Champ Uploadcare pour charger une image obligatoire -->
-          <input type="hidden" role="uploadcare-uploader" name="ticketImage" data-images-only="true" data-tabs="file camera url" data-clearable="true" />
+          <label for="ticketImage">Image du ticket</label>
+          <input type="file" id="ticketImage" name="ticketImage" accept="image/*" required>
         </div>
         <button type="submit" class="btn-primary submit-ticket">Envoyer</button>
       </form>

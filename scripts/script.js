@@ -189,41 +189,102 @@
     if (closeBtn) closeBtn.addEventListener('click', close);
 
     if (form) {
-      form.addEventListener('submit', function(e) {
+      form.addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!messageEl) return;
+        
+        // Vérifier que Firebase est initialisé
+        if (!window.firebaseDb || !window.firebaseStorage) {
+          messageEl.style.display = 'block';
+          messageEl.textContent = 'Erreur : Firebase non initialisé. Veuillez recharger la page.';
+          return;
+        }
+
         messageEl.style.display = 'block';
         messageEl.textContent = 'Envoi en cours...';
-        const pseudo = form.querySelector('[name="pseudo"]').value.trim();
-        const email = form.querySelector('input[type="email"]').value.trim();
-        const comment = form.querySelector('[name="comment"]').value.trim();
-        const image = form.querySelector('[name="ticketImage"]').value;
-        const payload = {
-          pseudo: pseudo,
-          email: email,
-          comment: comment,
-          ticketImage: image || ''
-        };
-        fetch(window.appConfig.FORMSPREE_ENDPOINT_TICKET, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }).then(function(resp) {
-          if (resp.ok) {
-            messageEl.textContent = 'Merci pour votre ticket !';
-            form.reset();
-            setTimeout(close, 3000);
-          } else {
-            return resp.json().then(function(data) {
-              throw new Error(data.error || 'Erreur lors de l\'envoi');
+        
+        try {
+          const pseudo = form.querySelector('[name="pseudo"]').value.trim();
+          const comment = form.querySelector('[name="comment"]').value.trim();
+          const imageFile = form.querySelector('[name="ticketImage"]').files[0];
+          
+          // Mode développement : utiliser le fallback
+          if (window.appConfig.IS_DEVELOPMENT) {
+            messageEl.textContent = 'Envoi en mode développement...';
+            
+            const formData = new FormData();
+            formData.append('pseudo', pseudo);
+            formData.append('comment', comment);
+            formData.append('type', 'ticket_submission');
+            if (imageFile) {
+              formData.append('image', imageFile);
+            }
+            
+            const response = await fetch(window.appConfig.FALLBACK_ENDPOINT, {
+              method: 'POST',
+              body: formData
             });
+            
+            if (response.ok) {
+              messageEl.textContent = 'Merci pour votre ticket ! (Mode développement)';
+              form.reset();
+              setTimeout(close, 3000);
+              return;
+            } else {
+              throw new Error('Erreur lors de l\'envoi vers le serveur de test');
+            }
           }
-        }).catch(function(err) {
-          messageEl.textContent = 'Erreur : ' + err.message;
-        });
+          
+          // Mode production : utiliser Firebase
+          let imageUrl = '';
+          
+          // Upload de l'image si présente
+          if (imageFile) {
+            messageEl.textContent = 'Upload de l\'image...';
+            const timestamp = Date.now();
+            const fileName = `${timestamp}_${imageFile.name}`;
+            const storageRef = window.firebaseStorageUtils.ref(
+              window.firebaseStorage, 
+              `${window.appConfig.STORAGE_FOLDER_TICKETS}/${fileName}`
+            );
+            
+            const snapshot = await window.firebaseStorageUtils.uploadBytes(storageRef, imageFile);
+            imageUrl = await window.firebaseStorageUtils.getDownloadURL(snapshot.ref);
+          }
+          
+          // Sauvegarde dans Firestore
+          messageEl.textContent = 'Sauvegarde des données...';
+          const ticketData = {
+            pseudo: pseudo,
+            comment: comment,
+            imageUrl: imageUrl,
+            createdAt: window.firebaseFirestore.serverTimestamp(),
+            type: 'ticket_submission'
+          };
+          
+          await window.firebaseFirestore.addDoc(
+            window.firebaseFirestore.collection(window.firebaseDb, window.appConfig.FIRESTORE_COLLECTION_TICKETS),
+            ticketData
+          );
+          
+          messageEl.textContent = 'Merci pour votre ticket !';
+          form.reset();
+          setTimeout(close, 3000);
+          
+        } catch (error) {
+          console.error('Erreur lors de l\'envoi:', error);
+          console.error('Code d\'erreur:', error.code);
+          console.error('Détails:', error);
+          
+          let errorMessage = 'Erreur : ' + error.message;
+          if (error.code === 'permission-denied') {
+            errorMessage = 'Erreur : Permissions Firebase insuffisantes. Vérifiez les règles Firestore/Storage.';
+          } else if (error.code === 'unauthenticated') {
+            errorMessage = 'Erreur : Authentification requise. Configurez les règles Firebase pour autoriser l\'accès public.';
+          }
+          
+          messageEl.textContent = errorMessage;
+        }
       });
     }
   }
@@ -250,21 +311,21 @@
       const ancienneteGroup = document.getElementById('app-anciennete-group');
       const frequenceGroup = document.getElementById('app-frequence-group');
       const whyGroup = document.getElementById('app-why-group');
-      const uploadGroup = document.getElementById('app-upload-group');
+      const emailInput = modal.querySelector('#app-email');
+      const emailGroup = emailInput ? emailInput.closest('.form-group') : null;
       if (form) form.reset();
       if (messageEl) messageEl.style.display = 'none';
       // Par défaut montrer tous les champs
-      ancienneteGroup.style.display = '';
-      frequenceGroup.style.display = '';
-      whyGroup.style.display = '';
-      uploadGroup.style.display = '';
+      if (ancienneteGroup) ancienneteGroup.style.display = '';
+      if (frequenceGroup) frequenceGroup.style.display = '';
+      if (whyGroup) whyGroup.style.display = '';
+      if (emailGroup) emailGroup.style.display = '';
       if (type === 'high') {
         header.textContent = 'Ticket Taurus +';
         submitBtn.textContent = 'Mon mail';
-        ancienneteGroup.style.display = 'none';
-        frequenceGroup.style.display = 'none';
-        whyGroup.style.display = 'none';
-        uploadGroup.style.display = 'none';
+        if (ancienneteGroup) ancienneteGroup.style.display = 'none';
+        if (frequenceGroup) frequenceGroup.style.display = 'none';
+        if (whyGroup) whyGroup.style.display = 'none';
       } else if (type === 'mid') {
         header.textContent = 'Ticket Taurus';
         submitBtn.textContent = 'Contacte moi pour recevoir ton maillot et rejoindre le VIP';
@@ -317,145 +378,151 @@
 
     // Soumission du formulaire
     if (form) {
-      form.addEventListener('submit', function(e) {
+      form.addEventListener('submit', async function(e) {
         e.preventDefault();
         if (!messageEl) return;
+        
+        // Vérifier que Firebase est initialisé
+        if (!window.firebaseDb) {
+          messageEl.style.display = 'block';
+          messageEl.textContent = 'Erreur : Firebase non initialisé. Veuillez recharger la page.';
+          return;
+        }
+
         messageEl.style.display = 'block';
         messageEl.textContent = 'Envoi en cours...';
-        const email = form.querySelector('input[type="email"]').value.trim();
-        const payload = { ticketType: currentType, email: email };
-        if (currentType !== 'high') {
-          payload.anciennete = form.querySelector('[name="anciennete"]').value;
-          payload.frequence = form.querySelector('[name="frequence"]').value;
-          payload.why = form.querySelector('[name="why"]').value.trim();
-          payload.upload = form.querySelector('[name="ticketImage"]').value || '';
-        }
-        fetch(window.appConfig.FORMSPREE_ENDPOINT_APPLICATION, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        }).then(function(resp) {
-          if (resp.ok) {
-            if (currentType === 'low') {
-              messageEl.textContent = 'Inscription réussie ! Redirection...';
-              setTimeout(function() {
-                window.location.href = window.appConfig.TELEGRAM_JOIN_URL;
-              }, 2000);
-            } else if (currentType === 'mid') {
-              messageEl.textContent = 'Merci ! Nous vous contacterons pour votre maillot et votre accès VIP.';
-              setTimeout(function() {
-                closeModal(modal);
-              }, 3000);
-            } else {
-              messageEl.textContent = 'Merci ! Je te réponds dans les jours qui suivent.';
-              setTimeout(function() {
-                closeModal(modal);
-              }, 3000);
+        
+        try {
+          const email = form.querySelector('input[type="email"]').value.trim();
+          const applicationData = { 
+            ticketType: currentType, 
+            email: email,
+            type: 'vip_application'
+          };
+          
+          if (currentType !== 'high') {
+            applicationData.anciennete = form.querySelector('[name="anciennete"]').value;
+            applicationData.frequence = form.querySelector('[name="frequence"]').value;
+            applicationData.why = form.querySelector('[name="why"]').value.trim();
+          }
+          
+          // Mode développement : utiliser le fallback
+          if (window.appConfig.IS_DEVELOPMENT) {
+            messageEl.textContent = 'Envoi en mode développement...';
+            
+            const response = await fetch(window.appConfig.FALLBACK_ENDPOINT, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify(applicationData)
+            });
+            
+            if (!response.ok) {
+              throw new Error('Erreur lors de l\'envoi vers le serveur de test');
             }
           } else {
-            return resp.json().then(function(data) {
-              throw new Error(data.error || 'Erreur lors de l\'envoi');
-            });
+            // Mode production : utiliser Firebase
+            applicationData.createdAt = window.firebaseFirestore.serverTimestamp();
+            
+            // Sauvegarde dans Firestore
+            await window.firebaseFirestore.addDoc(
+              window.firebaseFirestore.collection(window.firebaseDb, window.appConfig.FIRESTORE_COLLECTION_APPLICATIONS),
+              applicationData
+            );
           }
-        }).catch(function(err) {
-          messageEl.textContent = 'Erreur : ' + err.message;
-        });
+          
+          // Messages de succès selon le type
+          if (currentType === 'low') {
+            messageEl.textContent = 'Inscription réussie ! Redirection...';
+            setTimeout(function() {
+              window.location.href = window.appConfig.TELEGRAM_JOIN_URL;
+            }, 2000);
+          } else if (currentType === 'mid') {
+            messageEl.textContent = 'Merci ! Nous vous contacterons pour votre maillot et votre accès VIP.';
+            setTimeout(function() {
+              closeModal(modal);
+            }, 3000);
+          } else {
+            messageEl.textContent = 'Merci ! Je te réponds dans les jours qui suivent.';
+            setTimeout(function() {
+              closeModal(modal);
+            }, 3000);
+          }
+          
+        } catch (error) {
+          console.error('Erreur lors de l\'envoi:', error);
+          console.error('Code d\'erreur:', error.code);
+          console.error('Détails:', error);
+          
+          let errorMessage = 'Erreur : ' + error.message;
+          if (error.code === 'permission-denied') {
+            errorMessage = 'Erreur : Permissions Firebase insuffisantes. Vérifiez les règles Firestore/Storage.';
+          } else if (error.code === 'unauthenticated') {
+            errorMessage = 'Erreur : Authentification requise. Configurez les règles Firebase pour autoriser l\'accès public.';
+          }
+          
+          messageEl.textContent = errorMessage;
+        }
       });
     }
   }
 
   /**
-   * Initialise le carrousel interactif sur la page VIP.
+   * Initialise le carrousel 3D sur la page VIP.
    */
-  function initCarousel() {
-    const carousel = document.querySelector('.carousel');
+  function initCarousel3D() {
+    const carousel = document.querySelector('.carousel-3d');
     if (!carousel) return;
-    const slides = carousel.querySelectorAll('.carousel-slide');
+
+    const inner = carousel.querySelector('.carousel-inner');
+    if (!inner) return;
+
+    const items = inner.querySelectorAll('.carousel-item');
+    const itemCount = items.length;
+    if (itemCount === 0) return;
+
     const prevBtn = carousel.querySelector('.carousel-prev');
     const nextBtn = carousel.querySelector('.carousel-next');
-    const dotsContainer = carousel.querySelector('.carousel-dots');
-    if (!dotsContainer || slides.length === 0) return;
+    const angleStep = 360 / itemCount;
+    const depth = 350;
+
+    items.forEach(function(item, index) {
+      const angle = index * angleStep;
+      item.style.transform = 'rotateX(' + angle + 'deg) translateZ(' + depth + 'px)';
+    });
+
     let currentIndex = 0;
-    let intervalId;
+    let rotation = 0;
 
-    function createDots() {
-      slides.forEach(function(slide, index) {
-        const dot = document.createElement('button');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', function() {
-          clearInterval(intervalId);
-          showSlide(index);
-          startAuto();
-        });
-        dotsContainer.appendChild(dot);
-      });
-    }
-
-    function updateDots() {
-      const dots = dotsContainer.querySelectorAll('button');
-      dots.forEach(function(dot, index) {
-        dot.classList.toggle('active', index === currentIndex);
-      });
-    }
-
-    function showSlide(index) {
-      slides.forEach(function(slide, i) {
-        if (i === index) {
-          slide.classList.add('active');
-        } else {
-          slide.classList.remove('active');
-        }
-      });
-      currentIndex = index;
-      updateDots();
+    function updateRotation() {
+      rotation = -currentIndex * angleStep;
+      inner.style.transform = 'rotateX(' + rotation + 'deg)';
     }
 
     function nextSlide() {
-      showSlide((currentIndex + 1) % slides.length);
+      currentIndex = (currentIndex + 1) % itemCount;
+      updateRotation();
     }
 
     function prevSlide() {
-      showSlide((currentIndex - 1 + slides.length) % slides.length);
+      currentIndex = (currentIndex - 1 + itemCount) % itemCount;
+      updateRotation();
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function() {
-      clearInterval(intervalId);
-      prevSlide();
-      startAuto();
-    });
-    if (nextBtn) nextBtn.addEventListener('click', function() {
-      clearInterval(intervalId);
-      nextSlide();
-      startAuto();
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    let autoRotate = setInterval(nextSlide, 3500);
+
+    carousel.addEventListener('mouseenter', function() {
+      clearInterval(autoRotate);
     });
 
-    function startAuto() {
-      intervalId = setInterval(function() {
-        nextSlide();
-      }, 8000);
-    }
-    
-    // S'assurer que le premier slide est bien actif au chargement
-    if (slides.length > 0) {
-      let hasActive = false;
-      slides.forEach(function(slide, index) {
-        if (slide.classList.contains('active')) {
-          hasActive = true;
-          currentIndex = index;
-        }
-      });
-      // Si aucun slide n'est actif, activer le premier
-      if (!hasActive) {
-        slides[0].classList.add('active');
-        currentIndex = 0;
-      }
-    }
-    
-    createDots();
-    startAuto();
+    carousel.addEventListener('mouseleave', function() {
+      autoRotate = setInterval(nextSlide, 3500);
+    });
   }
 
 
@@ -472,7 +539,7 @@
     initMenuToggle();
     initTicketModal();
     initVipModals();
-    initCarousel();
+    initCarousel3D();
   }
 
   // Attendre que le DOM soit complètement chargé avant d'initialiser
