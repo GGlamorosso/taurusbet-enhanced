@@ -62,7 +62,7 @@
 
 .contest .poster {
   flex: 1 1 300px;
-  background: var(--color-dark);
+  background: url('../../assets/concours.webp') center/cover no-repeat;
   border-radius: 10px;
   padding: 2rem;
   display: flex;
@@ -73,15 +73,44 @@
   overflow: hidden;
 }
 
-.contest .poster::before {
-  content: 'AFFICHE';
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 3rem;
-  color: rgba(255, 255, 255, 0.05);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-10deg);
+/* .contest .poster::before supprimé car on a maintenant une vraie image de fond */
+
+/* Style pour la version centrée du concours */
+.contest-centered {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2rem;
+}
+
+.contest-centered .section-title {
+  margin-bottom: 0;
+}
+
+.contest-centered .poster {
+  flex: none;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Section TAURUS FT CELSIUS */
+.taurus-celsius-section {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.taurus-celsius-image {
+  margin-top: 2rem;
+}
+
+.taurus-celsius-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-height: 400px;
+  object-fit: cover;
 }
 
 .ticket-gallery {
