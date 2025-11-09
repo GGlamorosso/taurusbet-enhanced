@@ -96,20 +96,33 @@
 
 /* Section TAURUS FT CELSIUS */
 .taurus-celsius-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   margin-bottom: 4rem;
+  padding: 2rem 0;
+}
+
+.taurus-celsius-section .section-title {
+  margin-bottom: 2rem;
 }
 
 .taurus-celsius-image {
-  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .taurus-celsius-img {
   max-width: 100%;
+  width: auto;
   height: auto;
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   max-height: 400px;
+  max-width: 600px;
   object-fit: cover;
 }
 
