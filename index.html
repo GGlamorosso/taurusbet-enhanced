@@ -49,36 +49,38 @@
        CONTENU PRINCIPAL
        ===================================================================== -->
   <main>
-    <!-- Section Hero (Bannière principale) -->
-    <section class="hero">
-      <div class="hero-content fade-in">
-        <h1>Communauté Taurus</h1>
-        <p>Rejoignez la plus grande communauté de parieurs sportifs et partagez vos tickets gagnants avec des milliers de passionnés.</p>
-        <a href="pages/vip.html" class="btn-primary">Devenir VIP</a>
+    <!-- (1) Section CONCOURS DE LA SEMAINE -->
+    <section class="contest-banner fade-in">
+      <div class="container">
+        <h1 class="banner-title">CONCOURS DE LA SEMAINE</h1>
+      </div>
+    </section>
+    
+    <section class="container contest-main fade-in">
+      <div class="contest-poster">
+        <img src="assets/concours-affiche.jpg" alt="Affiche du concours de la semaine" class="contest-poster-img">
+      </div>
+      <button type="button" class="btn-primary contest-cta" id="openTicketModal">Déposer mon ticket</button>
+    </section>
+
+    <!-- (2) Section DECOUVRE L'OFFRE TAURUS FT CELSIUS -->
+    <section class="container taurus-offer fade-in">
+      <h2 class="section-title">DECOUVRE L'OFFRE TAURUS FT CELSIUS</h2>
+      <div class="taurus-promo">
+        <img src="assets/taurus-celsius-promo.jpg" alt="Promotion Taurus x Celsius" class="taurus-promo-img">
+        <a href="pages/vip.html" class="btn-secondary taurus-cta">Découvrir l'offre</a>
       </div>
     </section>
 
-    <!-- Section Concours de la semaine -->
-    <section class="container contest fade-in">
-      <div class="text">
-        <h2 class="section-title">Concours de la semaine</h2>
-        <p>Chaque semaine nous organisons un concours exclusif avec des prix incroyables pour nos membres. Participez dès maintenant et tentez de remporter des lots uniques&nbsp;!</p>
-        <a href="pages/vip.html" class="btn-secondary">En savoir plus</a>
-      </div>
-      <div class="poster"></div>
-    </section>
-
-    <!-- Section Tickets gagnants -->
-    <section class="container tickets fade-in" id="tickets">
-      <h2 class="section-title">Vos tickets</h2>
-      <p>Découvrez notre ticket du jour et partagez votre propre ticket gagnant pour inspirer la communauté.</p>
-      <div class="daily-ticket">
-        <img src="assets/ticket-du-jour.jpg" alt="Ticket du jour" class="daily-ticket-img">
-        <button type="button" class="btn-primary" id="openTicketModal">Déposer mon ticket</button>
+    <!-- (3) Section GAGNANT CONCOURS SEMAINE AVANT -->
+    <section class="container winner-previous fade-in">
+      <h2 class="section-title">GAGNANT CONCOURS SEMAINE AVANT</h2>
+      <div class="winner-ticket">
+        <img src="assets/ticket-gagnant.webp" alt="Ticket gagnant de la semaine précédente" class="winner-ticket-img">
       </div>
     </section>
 
-    <!-- Section Roue de la fortune -->
+    <!-- (4) Section Roue de la fortune et autres contenus -->
     <section class="container wheel-section fade-in" id="wheel">
       <h2 class="section-title">Roue de la semaine</h2>
       <p>Tournez la roue pour découvrir les surprises quotidiennes réservées à nos membres VIP.</p>

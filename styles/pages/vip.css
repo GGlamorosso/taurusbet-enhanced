@@ -297,3 +297,53 @@
     right: -1rem;
   }
 }
+
+/* =========================================================================
+   Ajustements Modale Mid Ticket (Version Compacte)
+   ========================================================================= */
+
+.mid-promo-compact {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.mid-promo-img-small {
+  max-width: 200px !important;
+  max-height: 150px !important;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.mid-actions-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.btn-compact {
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.9rem !important;
+  min-width: auto !important;
+  text-align: center;
+}
+
+/* Responsive pour modale compacte */
+@media (max-width: 480px) {
+  .mid-promo-img-small {
+    max-width: 150px !important;
+    max-height: 120px !important;
+  }
+  
+  .mid-actions-compact {
+    gap: 0.6rem;
+  }
+  
+  .btn-compact {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+  }
+}
