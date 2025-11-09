@@ -344,6 +344,11 @@
         // Priorité au data-ticket défini dans le markup
         const specified = btn.getAttribute('data-ticket');
         if (specified) {
+          // Redirection spéciale pour le Mid Ticket vers la modale de contact
+          if (specified === 'mid' && window.openMidContactModal) {
+            window.openMidContactModal(btn);
+            return;
+          }
           openForType(specified);
           return;
         }
@@ -525,6 +530,154 @@
     });
   }
 
+  /**
+   * Initialise la modale Mid Ticket (contact sans formulaire)
+   * Gère l'ouverture, fermeture, liens pré-remplis et tracking optionnel
+   */
+  function initMidContactModal() {
+    const modal = document.getElementById('midContactModal');
+    if (!modal) return;
+
+    const overlay = modal.querySelector('[data-close="mid"]');
+    const closeBtn = modal.querySelector('.modal-close');
+    const telegramBtn = document.getElementById('btnMidTelegram');
+    const whatsappBtn = document.getElementById('btnMidWhatsApp');
+    let openerElement = null; // Pour retourner le focus après fermeture
+
+    // Configuration des liens avec messages pré-remplis
+    function setupContactLinks() {
+      if (telegramBtn && window.TELEGRAM_CONTACT_URL && window.MID_PREFILL_MESSAGE) {
+        // Telegram peut supporter le paramètre text dans certains cas
+        const telegramUrl = window.TELEGRAM_CONTACT_URL + 
+          (window.TELEGRAM_CONTACT_URL.includes('?') ? '&' : '?') + 
+          'text=' + encodeURIComponent(window.MID_PREFILL_MESSAGE);
+        telegramBtn.href = telegramUrl;
+      }
+
+      if (whatsappBtn && window.WHATSAPP_CONTACT_URL && window.MID_PREFILL_MESSAGE) {
+        const whatsappUrl = window.WHATSAPP_CONTACT_URL + 
+          (window.WHATSAPP_CONTACT_URL.includes('?') ? '&' : '?') + 
+          'text=' + encodeURIComponent(window.MID_PREFILL_MESSAGE);
+        whatsappBtn.href = whatsappUrl;
+      }
+    }
+
+    // Tracking optionnel dans Firestore (non bloquant)
+    async function trackIntent(platform) {
+      try {
+        if (!window.firebaseDb || !window.firebaseFirestore) return;
+        
+        const intentData = {
+          platform: platform,
+          page: window.location.pathname,
+          createdAt: window.firebaseFirestore.serverTimestamp(),
+          type: 'mid_contact_intent'
+        };
+
+        // Tentative d'enregistrement non bloquante
+        await window.firebaseFirestore.addDoc(
+          window.firebaseFirestore.collection(window.firebaseDb, 'mid_intents'),
+          intentData
+        );
+      } catch (error) {
+        // Échec silencieux du tracking, ne pas bloquer l'utilisateur
+        console.warn('Tracking intent failed:', error);
+      }
+    }
+
+    // Fermeture de la modale
+    function closeMidModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      
+      // Retourner le focus à l'élément ouvreur
+      if (openerElement && typeof openerElement.focus === 'function') {
+        openerElement.focus();
+      }
+      
+      // Nettoyer l'écouteur ESC
+      if (modal._midEscHandler) {
+        document.removeEventListener('keydown', modal._midEscHandler);
+        delete modal._midEscHandler;
+      }
+    }
+
+    // Ouverture de la modale
+    function openMidModal(opener) {
+      openerElement = opener;
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      // Focus sur le premier bouton d'action
+      const firstFocusable = modal.querySelector('#btnMidTelegram, #btnMidWhatsApp, .modal-close');
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+
+      // Gérer la fermeture via ESC
+      function escHandler(e) {
+        if (e.key === 'Escape') {
+          closeMidModal();
+        }
+      }
+      document.addEventListener('keydown', escHandler);
+      modal._midEscHandler = escHandler;
+
+      // Focus trap basique
+      const focusableElements = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const firstFocusableElement = focusableElements[0];
+      const lastFocusableElement = focusableElements[focusableElements.length - 1];
+
+      modal.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          if (e.shiftKey) {
+            if (document.activeElement === firstFocusableElement) {
+              lastFocusableElement.focus();
+              e.preventDefault();
+            }
+          } else {
+            if (document.activeElement === lastFocusableElement) {
+              firstFocusableElement.focus();
+              e.preventDefault();
+            }
+          }
+        }
+      });
+    }
+
+    // Configuration initiale des liens
+    setupContactLinks();
+
+    // Écouteurs pour fermeture
+    if (overlay) {
+      overlay.addEventListener('click', closeMidModal);
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMidModal);
+    }
+
+    // Écouteurs pour les boutons de contact avec tracking
+    if (telegramBtn) {
+      telegramBtn.addEventListener('click', function() {
+        trackIntent('telegram');
+        // Le navigateur suivra le lien href automatiquement
+      });
+    }
+    if (whatsappBtn) {
+      whatsappBtn.addEventListener('click', function() {
+        trackIntent('whatsapp');
+        // Le navigateur suivra le lien href automatiquement
+      });
+    }
+
+    // Exposer la fonction d'ouverture pour utilisation dans initVipModals
+    window.openMidContactModal = openMidModal;
+  }
+
 
   /* ==========================================================================
      5. INITIALISATION (Point d'entrée principal)
@@ -540,6 +693,7 @@
     initTicketModal();
     initVipModals();
     initCarousel3D();
+    initMidContactModal();
   }
 
   // Attendre que le DOM soit complètement chargé avant d'initialiser

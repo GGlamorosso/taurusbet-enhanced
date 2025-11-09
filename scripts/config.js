@@ -16,6 +16,13 @@ window.appConfig = {
   IS_DEVELOPMENT: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
 };
 
+// Liens de contact directs (à personnaliser)
+window.TELEGRAM_CONTACT_URL = 'https://t.me/TaurusBetTelegram'; // ex: https://t.me/taurusbet
+window.WHATSAPP_CONTACT_URL = 'https://wa.me/0783798669';      // ex: https://wa.me/33612345678
+
+// Message pré-rempli pour Telegram/WhatsApp
+window.MID_PREFILL_MESSAGE = "Salut Taurus, je veux rejoindre le VIP via le Mid Ticket (Celsius / 40€ résiliable).";
+
 window.firebaseConfig = {
   apiKey: 'AIzaSyA6NIx3PVeMNuiXqP8jM6456VRcK98JsLY',
   authDomain: 'taurus-38e2d.firebaseapp.com',
