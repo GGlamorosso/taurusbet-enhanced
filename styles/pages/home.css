@@ -6,7 +6,7 @@
   position: relative;
   width: 100%;
   min-height: 70vh;
-  background: url('../../assets/hero-bg.png') center/cover no-repeat;
+  background: url('../../assets/hero-bg.webp') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
