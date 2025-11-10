@@ -62,7 +62,7 @@
 
 .contest .poster {
   flex: 1 1 300px;
-  background: url('../../assets/celsius.webp') center/cover no-repeat;
+  background: url('../../assets/concours.webp') center/cover no-repeat;
   border-radius: 10px;
   padding: 2rem;
   display: flex;
