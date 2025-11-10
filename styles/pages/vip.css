@@ -297,3 +297,88 @@
     right: -1rem;
   }
 }
+
+/* =========================================================================
+   Styles Modale Mid Ticket - Boutons côte à côte et compacts
+   ========================================================================= */
+
+.mid-promo {
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.mid-promo img {
+  max-width: 200px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.mid-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.mid-actions .btn {
+  padding: 0.5rem 0.8rem !important;
+  font-size: 0.8rem !important;
+  min-width: auto !important;
+  text-align: center;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  max-width: 140px;
+  border-radius: 4px;
+}
+
+/* Responsive pour modale Mid Ticket */
+@media (max-width: 480px) {
+  .mid-promo img {
+    max-width: 150px;
+    max-height: 120px;
+  }
+  
+  .mid-actions {
+    gap: 0.8rem;
+  }
+  
+  .mid-actions .btn {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.75rem !important;
+    max-width: 120px;
+  }
+}
+
+/* =========================================================================
+   Prix du ticket Taurus+
+   ========================================================================= */
+
+.ticket-price {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  background: rgba(216, 31, 39, 0.9);
+  color: var(--color-white);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  z-index: 10;
+  backdrop-filter: blur(5px);
+}
+
+@media (max-width: 768px) {
+  .ticket-price {
+    bottom: 8px;
+    right: 12px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+  }
+}
