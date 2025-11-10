@@ -139,6 +139,7 @@
 .wheel-section {
   margin-top: 4rem;
   text-align: center;
+  display: none; /* Temporairement cachée - à supprimer plus tard */
 }
 
 .wheel {
