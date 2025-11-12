@@ -59,6 +59,33 @@
     <!-- Section Concours de la semaine -->
     <section class="container contest fade-in contest-centered">
       <h2 class="section-title">Concours de la semaine</h2>
+      <!-- Compteur hebdomadaire -->
+      <div class="countdown-container">
+        <div class="countdown-timer">
+          <div class="countdown-text">Temps restant :</div>
+          <div class="countdown-display">
+            <div class="time-unit">
+              <span class="time-value" id="days">0</span>
+              <span class="time-label">JOURS</span>
+            </div>
+            <div class="time-separator">:</div>
+            <div class="time-unit">
+              <span class="time-value" id="hours">0</span>
+              <span class="time-label">H</span>
+            </div>
+            <div class="time-separator">:</div>
+            <div class="time-unit">
+              <span class="time-value" id="minutes">0</span>
+              <span class="time-label">MIN</span>
+            </div>
+            <div class="time-separator">:</div>
+            <div class="time-unit">
+              <span class="time-value" id="seconds">0</span>
+              <span class="time-label">SEC</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="poster"></div>
       <button type="button" class="btn-primary" id="openTicketModal">Déposer mon ticket</button>
     </section>

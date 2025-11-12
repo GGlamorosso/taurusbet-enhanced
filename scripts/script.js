@@ -31,6 +31,36 @@
     return `${year}-${month}-${day}`;
   }
 
+  /**
+   * Obtient la date et l'heure actuelle dans le fuseau horaire Europe/Paris
+   * @returns {Date} Date et heure Paris
+   */
+  function getParisDateTime() {
+    const now = new Date();
+    const parisString = now.toLocaleString('en-US', { timeZone: 'Europe/Paris' });
+    return new Date(parisString);
+  }
+
+  /**
+   * Calcule le prochain dimanche à minuit (heure de Paris)
+   * @returns {Date} Date du prochain dimanche à minuit
+   */
+  function getNextSunday() {
+    const parisNow = getParisDateTime();
+    const currentDay = parisNow.getDay(); // 0 = dimanche, 1 = lundi, ..., 6 = samedi
+    
+    // Si on est dimanche (0), on veut le dimanche suivant
+    // Si on est lundi (1), on veut dans 6 jours
+    // Si on est mardi (2), on veut dans 5 jours, etc.
+    const daysUntilSunday = currentDay === 0 ? 7 : (7 - currentDay);
+    
+    const nextSunday = new Date(parisNow);
+    nextSunday.setDate(parisNow.getDate() + daysUntilSunday);
+    nextSunday.setHours(0, 0, 0, 0); // Minuit
+    
+    return nextSunday;
+  }
+
 
   /* ==========================================================================
      2. COMPTEUR DE PLACES (Gestion des places VIP disponibles)
@@ -64,7 +94,80 @@
 
 
   /* ==========================================================================
-     3. ANIMATIONS (Animations au scroll)
+     3. COMPTEUR HEBDOMADAIRE (Compteur jusqu'au dimanche suivant)
+     ========================================================================== */
+
+  /**
+   * Met à jour le compteur hebdomadaire qui se réinitialise chaque dimanche à minuit
+   * Calcule et affiche le temps restant jusqu'au prochain dimanche
+   */
+  function updateWeeklyCountdown() {
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    
+    // Vérifier que tous les éléments existent
+    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) {
+      return;
+    }
+    
+    const parisNow = getParisDateTime();
+    const nextSunday = getNextSunday();
+    const timeRemaining = nextSunday.getTime() - parisNow.getTime();
+    
+    if (timeRemaining <= 0) {
+      // Si le temps est écoulé, recalculer le prochain dimanche
+      const newNextSunday = getNextSunday();
+      const newTimeRemaining = newNextSunday.getTime() - parisNow.getTime();
+      updateCountdownDisplay(newTimeRemaining, daysEl, hoursEl, minutesEl, secondsEl);
+    } else {
+      updateCountdownDisplay(timeRemaining, daysEl, hoursEl, minutesEl, secondsEl);
+    }
+  }
+
+  /**
+   * Met à jour l'affichage du compteur avec les valeurs calculées
+   * @param {number} timeRemaining Temps restant en millisecondes
+   * @param {Element} daysEl Élément DOM des jours
+   * @param {Element} hoursEl Élément DOM des heures
+   * @param {Element} minutesEl Élément DOM des minutes
+   * @param {Element} secondsEl Élément DOM des secondes
+   */
+  function updateCountdownDisplay(timeRemaining, daysEl, hoursEl, minutesEl, secondsEl) {
+    const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    
+    // Ajouter une animation lors de la mise à jour des secondes
+    if (secondsEl.textContent !== seconds.toString().padStart(2, '0')) {
+      secondsEl.classList.add('updating');
+      setTimeout(function() {
+        secondsEl.classList.remove('updating');
+      }, 300);
+    }
+    
+    daysEl.textContent = days.toString();
+    hoursEl.textContent = hours.toString().padStart(2, '0');
+    minutesEl.textContent = minutes.toString().padStart(2, '0');
+    secondsEl.textContent = seconds.toString().padStart(2, '0');
+  }
+
+  /**
+   * Initialise le compteur hebdomadaire et lance la mise à jour régulière
+   */
+  function initWeeklyCountdown() {
+    // Mettre à jour immédiatement
+    updateWeeklyCountdown();
+    
+    // Mettre à jour toutes les secondes
+    setInterval(updateWeeklyCountdown, 1000);
+  }
+
+
+  /* ==========================================================================
+     4. ANIMATIONS (Animations au scroll)
      ========================================================================== */
 
   /**
@@ -97,7 +200,7 @@
 
 
   /* ==========================================================================
-     4. MENU MOBILE (Toggle du menu hamburger)
+     5. MENU MOBILE (Toggle du menu hamburger)
      ========================================================================== */
 
   /**
@@ -119,7 +222,7 @@
   }
 
   /* ======================================================================
-     5. MODALES ET FORMULAIRES (Déclaration et gestion des modales)
+     6. MODALES ET FORMULAIRES (Déclaration et gestion des modales)
      ====================================================================== */
 
   /**
@@ -680,7 +783,7 @@
 
 
   /* ==========================================================================
-     5. INITIALISATION (Point d'entrée principal)
+     7. INITIALISATION (Point d'entrée principal)
      ========================================================================== */
 
   /**
@@ -688,6 +791,7 @@
    */
   function init() {
     updateSeatsCounter();
+    initWeeklyCountdown();
     initAnimations();
     initMenuToggle();
     initTicketModal();

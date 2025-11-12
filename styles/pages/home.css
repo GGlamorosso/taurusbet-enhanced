@@ -94,6 +94,80 @@
   max-width: 400px;
 }
 
+/* Styles pour le compteur hebdomadaire */
+.countdown-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem 0 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--color-bg-dark) 0%, rgba(216, 31, 39, 0.1) 100%);
+  border: 2px solid var(--color-red);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(216, 31, 39, 0.2);
+}
+
+.countdown-timer {
+  text-align: center;
+}
+
+.countdown-text {
+  color: var(--color-white);
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.countdown-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 70px;
+}
+
+.time-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: var(--color-red);
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.time-label {
+  font-size: 0.8rem;
+  color: var(--color-gray-light);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-top: 0.2rem;
+}
+
+.time-separator {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--color-gold);
+  font-weight: 700;
+  margin: 0 0.2rem;
+}
+
+/* Animation du compteur */
+.time-value {
+  transition: all 0.3s ease;
+}
+
+.time-value.updating {
+  transform: scale(1.1);
+  color: var(--color-gold);
+}
+
 /* Section TAURUS FT CELSIUS */
 .taurus-celsius-section {
   display: flex;
@@ -185,5 +259,32 @@
 @media (max-width: 768px) {
   .hero-content h1 {
     font-size: 2.5rem;
+  }
+
+  /* Styles responsifs pour le compteur */
+  .countdown-container {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+
+  .countdown-display {
+    gap: 0.3rem;
+  }
+
+  .time-unit {
+    min-width: 50px;
+  }
+
+  .time-value {
+    font-size: 1.8rem;
+  }
+
+  .time-separator {
+    font-size: 1.5rem;
+    margin: 0 0.1rem;
+  }
+
+  .time-label {
+    font-size: 0.7rem;
   }
 }
